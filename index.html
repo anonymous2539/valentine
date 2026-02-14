@@ -2,57 +2,111 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Для Маликуши ❤️</title>
+
 <style>
-body {
+body{
     margin:0;
-    font-family: Arial, sans-serif;
+    font-family: 'Segoe UI', sans-serif;
     text-align:center;
-    background: linear-gradient(135deg,#ff758c,#ff7eb3);
     color:#fff;
-    overflow:hidden;
+    overflow-x:hidden;
+    background: linear-gradient(-45deg,#ff4e8a,#ff758c,#ff7eb3,#ff9acb);
+    background-size:400% 400%;
+    animation: gradient 10s ease infinite;
 }
-.container { padding:40px; }
-button {
-    padding:12px 25px;
-    margin:10px;
-    font-size:16px;
+@keyframes gradient{
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+
+.container{
+    padding:40px 20px;
+    max-width:500px;
+    margin:auto;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+}
+
+h1{font-size:30px;margin-bottom:15px;}
+h2{font-size:22px;margin-bottom:20px;}
+
+button{
+    width:100%;
+    padding:18px;
+    margin:12px 0;
+    font-size:18px;
     border:none;
-    border-radius:25px;
+    border-radius:30px;
     cursor:pointer;
-    background:#fff;
-    color:#ff4b6e;
     font-weight:bold;
+    background:white;
+    color:#ff4e8a;
+    transition:0.3s;
 }
-.hidden { display:none; }
-#runBtn {
-    position:absolute;
+button:active{
+    transform:scale(0.95);
 }
-.heart {
-    position: fixed;
-    top:-10px;
-    font-size:20px;
-    animation: fall 5s linear infinite;
-}
-@keyframes fall {
-    to { transform: translateY(100vh); }
-}
-#countdown {
+
+.hidden{display:none;}
+
+#runBtn{position:relative;}
+
+#countdown{
     font-size:20px;
     margin-top:20px;
+    font-weight:bold;
+}
+
+.fade{
+    animation:fadeIn 0.8s ease forwards;
+}
+@keyframes fadeIn{
+    from{opacity:0;transform:translateY(20px);}
+    to{opacity:1;transform:translateY(0);}
+}
+
+.heart{
+    position:fixed;
+    top:-10px;
+    font-size:22px;
+    animation:fall 5s linear infinite;
+}
+@keyframes fall{
+    to{transform:translateY(100vh);}
+}
+
+.typing{
+    border-right:2px solid white;
+    white-space:nowrap;
+    overflow:hidden;
+    animation:typing 3s steps(40,end), blink .7s infinite;
+}
+@keyframes typing{
+    from{width:0}
+    to{width:100%}
+}
+@keyframes blink{
+    50%{border-color:transparent}
 }
 </style>
 </head>
+
 <body>
 
-<div class="container" id="start">
-<h1>Привет, Маликушко ❤️</h1>
-<p> квест для самой лучшей девочки.</p>
+<div class="container fade" id="start">
+<h1 class="typing">Привет, Маликуша ❤️</h1>
+<p>Я сделал для тебя особенный квест.</p>
 <button onclick="next('q1')">Начать</button>
 </div>
 
 <div class="container hidden" id="q1">
-<h2>Кто самая чоткая</h2>
+<h2>Кто самая чоткая девочка?</h2>
 <button onclick="wrong('e1')">Кто-то</button>
 <button onclick="next('q2')">Маликуша ❤️</button>
 <button onclick="wrong('e1')">Хезе</button>
@@ -61,24 +115,31 @@ button {
 
 <div class="container hidden" id="q2">
 <h2>Насколько я тебя люблю?</h2>
-<button onclick="next('final')">многа очень многа вкусняк мой любимый 💖</button>
-<button id="runBtn">Немного</button>
+<button onclick="next('final'); startHearts(); playSound();">
+Очень очень очень сильно 💖
+</button>
+<button id="runBtn">Немного 😈</button>
 </div>
 
 <div class="container hidden" id="final">
 <h1>Я люблю тебя, Маликуша ❤️</h1>
-<p>И очень жду нашей встречи нах</p>
-
+<p>И считаю секунды до нашей встречи.</p>
 <div id="countdown"></div>
-
 <button onclick="hug()">Обнять</button>
 <p id="hugText"></p>
 </div>
 
+<audio id="popSound">
+<source src="https://www.soundjay.com/buttons/sounds/button-3.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 function next(id){
-    document.querySelectorAll('.container').forEach(el=>el.classList.add('hidden'));
-    document.getElementById(id).classList.remove('hidden');
+    document.querySelectorAll('.container')
+    .forEach(el=>el.classList.add('hidden'));
+    let el=document.getElementById(id);
+    el.classList.remove('hidden');
+    el.classList.add('fade');
 }
 
 function wrong(id){
@@ -86,18 +147,29 @@ function wrong(id){
 }
 
 function hug(){
-    document.getElementById("hugText").innerText="3 марта обниму по-настоящему ❤️";
+    document.getElementById("hugText")
+    .innerText="3 марта обниму по-настоящему ❤️";
 }
 
-let runBtn = document.getElementById("runBtn");
-runBtn.addEventListener("mouseover", function(){
-    let x = Math.random() * (window.innerWidth - 120);
-    let y = Math.random() * (window.innerHeight - 60);
-    runBtn.style.left = x + "px";
-    runBtn.style.top = y + "px";
-});
+function playSound(){
+    document.getElementById("popSound").play();
+}
 
-function createHearts(){
+/* Убегающая кнопка */
+let runBtn=document.getElementById("runBtn");
+runBtn.addEventListener("mouseover",move);
+runBtn.addEventListener("touchstart",move);
+
+function move(){
+    let x=Math.random()*(window.innerWidth-runBtn.offsetWidth);
+    let y=Math.random()*(window.innerHeight-runBtn.offsetHeight);
+    runBtn.style.position="fixed";
+    runBtn.style.left=x+"px";
+    runBtn.style.top=y+"px";
+}
+
+/* Сердца */
+function startHearts(){
     setInterval(()=>{
         let heart=document.createElement("div");
         heart.classList.add("heart");
@@ -105,31 +177,30 @@ function createHearts(){
         heart.innerText="❤️";
         document.body.appendChild(heart);
         setTimeout(()=>heart.remove(),5000);
-    },300);
+    },250);
 }
 
+/* Счётчик до 3 марта */
 function updateCountdown(){
-    let now = new Date();
-    let year = now.getFullYear();
-    let meetDate = new Date(year, 2, 3); // 3 марта (месяцы с 0)
-    if(now > meetDate){
-        meetDate = new Date(year+1, 2, 3);
+    let now=new Date();
+    let year=now.getFullYear();
+    let meetDate=new Date(year,2,3);
+    if(now>meetDate){
+        meetDate=new Date(year+1,2,3);
     }
-    let diff = meetDate - now;
+    let diff=meetDate-now;
 
-    let days = Math.floor(diff / (1000*60*60*24));
-    let hours = Math.floor((diff / (1000*60*60)) % 24);
-    let minutes = Math.floor((diff / (1000*60)) % 60);
-    let seconds = Math.floor((diff / 1000) % 60);
+    let days=Math.floor(diff/(1000*60*60*24));
+    let hours=Math.floor((diff/(1000*60*60))%24);
+    let minutes=Math.floor((diff/(1000*60))%60);
+    let seconds=Math.floor((diff/1000)%60);
 
-    document.getElementById("countdown").innerHTML =
-        "До встречи осталось: <br>" +
-        days+" д "+hours+" ч "+minutes+" м "+seconds+" с";
+    document.getElementById("countdown").innerHTML=
+    days+" д "+hours+" ч "+minutes+" м "+seconds+" с";
 }
 
 setInterval(updateCountdown,1000);
-
-document.getElementById("q2").addEventListener("click", createHearts);
+updateCountdown();
 </script>
 
 </body>
