@@ -8,8 +8,9 @@ body {
     margin:0;
     font-family: Arial, sans-serif;
     text-align:center;
-    background: linear-gradient(135deg,#ff9a9e,#fad0c4);
+    background: linear-gradient(135deg,#ff758c,#ff7eb3);
     color:#fff;
+    overflow:hidden;
 }
 .container { padding:40px; }
 button {
@@ -24,48 +25,53 @@ button {
     font-weight:bold;
 }
 .hidden { display:none; }
+#runBtn {
+    position:absolute;
+}
 .heart {
     position: fixed;
     top:-10px;
-    color:red;
     font-size:20px;
     animation: fall 5s linear infinite;
 }
 @keyframes fall {
     to { transform: translateY(100vh); }
 }
+#countdown {
+    font-size:20px;
+    margin-top:20px;
+}
 </style>
 </head>
 <body>
 
 <div class="container" id="start">
-<h1>Привет, Маликуша ❤️</h1>
-<p>У меня для тебя маленький квест. Если ответишь правильно — получишь кое-что особенное.</p>
+<h1>Привет, Маликушко ❤️</h1>
+<p> квест для самой лучшей девочки.</p>
 <button onclick="next('q1')">Начать</button>
 </div>
 
 <div class="container hidden" id="q1">
-<h2>Где мы познакомились?</h2>
-<button onclick="wrong()">В магазине</button>
-<button onclick="next('q2')">В интернете</button>
-<button onclick="wrong()">В автобусе</button>
-<p id="error1"></p>
+<h2>Кто самая чоткая</h2>
+<button onclick="wrong('e1')">Кто-то</button>
+<button onclick="next('q2')">Маликуша ❤️</button>
+<button onclick="wrong('e1')">Хезе</button>
+<p id="e1"></p>
 </div>
 
 <div class="container hidden" id="q2">
-<h2>Какую песню я ассоциирую с тобой?</h2>
-<button onclick="wrong2()">Random песня</button>
-<button onclick="finish()">Наша особенная песня</button>
-<button onclick="wrong2()">Любая из чарта</button>
-<p id="error2"></p>
+<h2>Насколько я тебя люблю?</h2>
+<button onclick="next('final')">многа очень многа вкусняк мой любимый 💖</button>
+<button id="runBtn">Немного</button>
 </div>
 
 <div class="container hidden" id="final">
-<h1>Ты прошла квест 💖</h1>
-<p>А теперь главный ответ:</p>
-<h2>Я люблю тебя, Маликуша.</h2>
-<p>И даже расстояние ничего не меняет.</p>
-<button onclick="hug()">Обнять тебя виртуально</button>
+<h1>Я люблю тебя, Маликуша ❤️</h1>
+<p>И очень жду нашей встречи нах</p>
+
+<div id="countdown"></div>
+
+<button onclick="hug()">Обнять</button>
 <p id="hugText"></p>
 </div>
 
@@ -75,22 +81,21 @@ function next(id){
     document.getElementById(id).classList.remove('hidden');
 }
 
-function wrong(){
-    document.getElementById("error1").innerText="Подумай ещё 😉";
-}
-
-function wrong2(){
-    document.getElementById("error2").innerText="Не совсем так 😌";
-}
-
-function finish(){
-    next('final');
-    createHearts();
+function wrong(id){
+    document.getElementById(id).innerText="Подумай ещё 😌";
 }
 
 function hug(){
-    document.getElementById("hugText").innerText="Скоро сделаю это по-настоящему ❤️";
+    document.getElementById("hugText").innerText="3 марта обниму по-настоящему ❤️";
 }
+
+let runBtn = document.getElementById("runBtn");
+runBtn.addEventListener("mouseover", function(){
+    let x = Math.random() * (window.innerWidth - 120);
+    let y = Math.random() * (window.innerHeight - 60);
+    runBtn.style.left = x + "px";
+    runBtn.style.top = y + "px";
+});
 
 function createHearts(){
     setInterval(()=>{
@@ -102,6 +107,29 @@ function createHearts(){
         setTimeout(()=>heart.remove(),5000);
     },300);
 }
+
+function updateCountdown(){
+    let now = new Date();
+    let year = now.getFullYear();
+    let meetDate = new Date(year, 2, 3); // 3 марта (месяцы с 0)
+    if(now > meetDate){
+        meetDate = new Date(year+1, 2, 3);
+    }
+    let diff = meetDate - now;
+
+    let days = Math.floor(diff / (1000*60*60*24));
+    let hours = Math.floor((diff / (1000*60*60)) % 24);
+    let minutes = Math.floor((diff / (1000*60)) % 60);
+    let seconds = Math.floor((diff / 1000) % 60);
+
+    document.getElementById("countdown").innerHTML =
+        "До встречи осталось: <br>" +
+        days+" д "+hours+" ч "+minutes+" м "+seconds+" с";
+}
+
+setInterval(updateCountdown,1000);
+
+document.getElementById("q2").addEventListener("click", createHearts);
 </script>
 
 </body>
